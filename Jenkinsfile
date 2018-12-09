@@ -20,7 +20,7 @@ spec:
 ){
 	node(label) {
 		stage('Get a Maven Project') {
-			git 'https://github.com/xiaowu1002430026/hello-world.git'
+			git 'https://gogs.tst.xiaowu.com/xiaowu/hello-world.git'
 			container('maven') {
 				sh 'mvn -B clean package'
 			}
