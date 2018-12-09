@@ -12,20 +12,10 @@ spec:
     volumeMounts:
     - name: maven-repo
       mountPath: /root/.m2/repository
-  - name: docker
-    image: docker:18.09
-    command: ['cat']
-    tty: true
-    volumeMounts:
-    - name: dockersock
-      mountPath: /var/run/docker.sock
   volumes:
-  - name: dockersock
-    hostPath:
-      path: /var/run/docker.sock
-  - name: maven-repo
-    persistentVolumeClaim:
-      claimName: maven-repo
+    - name: maven-repo
+      persistentVolumeClaim:
+        claimName: maven-repo
 """
 ){
 	node(label) {
@@ -34,9 +24,7 @@ spec:
 			container('maven') {
 				sh 'mvn -B clean package'
 			}
-			container('docker') {
-				sh "docker build -t ${image} ."
-			}
+			
 		}
 	}
 }
