@@ -12,19 +12,32 @@ spec:
     volumeMounts:
     - name: maven-repo
       mountPath: /root/.m2/repository
+  - name: docker
+    image: docker:18.09
+    command: ['cat']
+    tty: true
+    volumeMounts:
+    - name: dockersock
+      mountPath: /var/run/docker.sock
   volumes:
-    - name: maven-repo
-      persistentVolumeClaim:
-        claimName: maven-repo
+  - name: dockersock
+    hostPath:
+      path: /var/run/docker.sock
+  - name: maven-repo
+    persistentVolumeClaim:
+      claimName: maven-repo
 """
-){
+)
+{
 	node(label) {
 		stage('Get a Maven Project') {
-			git 'https://gogs.tst.xiaowu.com/xiaowu/hello-world.git'
+			git 'https://github.com/xiaowu1002430026/hello-world.git'
 			container('maven') {
 				sh 'mvn -B clean package'
 			}
-			
+			container('docker') {
+				sh "docker build -t ${image} ."
+			}
 		}
 	}
 }
